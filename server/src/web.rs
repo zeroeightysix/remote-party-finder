@@ -6,7 +6,7 @@ use std::{
 };
 
 use anyhow::{Context, Result};
-use chrono::Utc;
+use chrono::{TimeDelta, Utc};
 use futures_util::{SinkExt, TryStreamExt};
 use mongodb::{
     bson::doc,
@@ -247,7 +247,7 @@ fn listings(state: Arc<State>) -> BoxedFilter<(impl Reply, )> {
     async fn logic(state: Arc<State>, codes: Option<String>) -> std::result::Result<impl Reply, Infallible> {
         let lang = Language::from_codes(codes.as_deref());
 
-        let two_hours_ago = Utc::now() - chrono::Duration::hours(2);
+        let two_hours_ago = Utc::now() - TimeDelta::try_hours(2).unwrap();
         let res = state
             .collection()
             .aggregate(

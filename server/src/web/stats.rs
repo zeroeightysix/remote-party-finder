@@ -1,5 +1,5 @@
 use anyhow::Result;
-use chrono::{Duration, Utc};
+use chrono::{TimeDelta, Utc};
 use mongodb::bson::{Document, doc};
 use mongodb::options::AggregateOptions;
 use futures_util::TryStreamExt;
@@ -149,7 +149,7 @@ pub async fn get_stats(state: &State) -> Result<Statistics> {
 }
 
 pub async fn get_stats_seven_days(state: &State) -> Result<Statistics> {
-    let last_week = Utc::now() - Duration::days(7);
+    let last_week = Utc::now() - TimeDelta::try_days(7).unwrap();
 
     let mut docs = QUERY.to_vec();
     docs.insert(0, doc! {
