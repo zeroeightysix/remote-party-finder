@@ -7,7 +7,9 @@ use std::{
 
 use anyhow::{Context, Result};
 use chrono::{TimeDelta, Utc};
-use futures_util::{SinkExt, TryStreamExt};
+use futures_util::{FutureExt, SinkExt, StreamExt, TryStreamExt};
+use futures_util::future::select;
+use futures_util::stream::{SplitSink, SplitStream};
 use mongodb::{
     bson::doc,
     Client as MongoClient,
@@ -19,7 +21,6 @@ use mongodb::{
 use tokio::sync::broadcast::Sender;
 use tokio::sync::RwLock;
 use warp::{Filter, filters::BoxedFilter, http::Uri, Reply};
-use warp::ws::WebSocket;
 
 use crate::{
     config::Config,
@@ -458,7 +459,7 @@ fn contribute_multiple(state: Arc<State>) -> BoxedFilter<(impl Reply, )> {
 }
 
 fn receive(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
-    async fn logic(state: Arc<State>, mut websocket: WebSocket) {
+    async fn send_listings(state: Arc<State>, mut tx: SplitSink<warp::ws::WebSocket, warp::ws::Message>) {
         let mut rx = state.listings_channel.subscribe();
         while let Ok(v) = rx.recv().await {
             let Ok(json) = serde_json::to_string(&*v) else {
@@ -466,19 +467,31 @@ fn receive(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
                 continue;
             };
 
-            if websocket.send(warp::ws::Message::text(json)).await.is_err() {
+            if tx.send(warp::ws::Message::text(json)).await.is_err() {
                 break;
             }
         }
 
-        let _ = websocket.close().await;
+        let _ = tx.close().await;
+    }
+
+    // warp handles WS ping-pong for us, but we must poll the receive part of the websocket for that to work.
+    async fn keepalive(mut rx: SplitStream<warp::ws::WebSocket>) {
+        while let Some(_) = rx.next().await {};
     }
 
     let route = warp::path("receive")
         .and(warp::ws())
         .map(move |ws: warp::ws::Ws| {
             let state = Arc::clone(&state);
-            ws.on_upgrade(move |websocket| logic(state, websocket))
+            ws.on_upgrade(move |websocket| {
+                let (tx, rx) = websocket.split();
+
+                select(
+                    Box::pin(send_listings(state, tx)),
+                    Box::pin(keepalive(rx)) // if the keepalive quits, the socket is probably closed
+                ).map(|_| ())
+            })
         });
 
     warp::get().and(route).boxed()
