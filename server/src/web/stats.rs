@@ -2,7 +2,7 @@ use anyhow::Result;
 use chrono::{Duration, Utc};
 use mongodb::bson::{Document, doc};
 use mongodb::options::AggregateOptions;
-use tokio_stream::StreamExt;
+use futures_util::TryStreamExt;
 use crate::stats::{Aliases, Statistics};
 use crate::web::State;
 
