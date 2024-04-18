@@ -1,4 +1,6 @@
 #![feature(try_blocks, iter_intersperse)]
+#![feature(let_chains)]
+#![feature(async_closure)]
 
 use anyhow::Context;
 use std::borrow::Cow;
@@ -17,6 +19,7 @@ mod stats;
 mod web;
 mod template;
 mod ffxiv;
+mod ws;
 
 #[cfg(test)]
 mod test;

@@ -7,9 +7,7 @@ use std::{
 
 use anyhow::{Context, Result};
 use chrono::{TimeDelta, Utc};
-use futures_util::{FutureExt, SinkExt, StreamExt, TryStreamExt};
-use futures_util::future::select;
-use futures_util::stream::{SplitSink, SplitStream};
+use futures_util::{TryStreamExt};
 use mongodb::{
     bson::doc,
     Client as MongoClient,
@@ -31,6 +29,7 @@ use crate::{
     template::listings::ListingsTemplate,
     template::stats::StatsTemplate,
 };
+use crate::ws::WsApiClient;
 
 mod stats;
 
@@ -45,10 +44,10 @@ pub async fn start(config: Arc<Config>) -> Result<()> {
 }
 
 pub struct State {
-    config: Arc<Config>,
-    mongo: MongoClient,
-    stats: RwLock<Option<CachedStatistics>>,
-    listings_channel: Sender<Arc<[PartyFinderListing]>>,
+    pub config: Arc<Config>,
+    pub mongo: MongoClient,
+    pub stats: RwLock<Option<CachedStatistics>>,
+    pub listings_channel: Sender<Arc<[PartyFinderListing]>>,
 }
 
 impl State {
@@ -459,38 +458,15 @@ fn contribute_multiple(state: Arc<State>) -> BoxedFilter<(impl Reply, )> {
 }
 
 fn receive(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
-    async fn send_listings(state: Arc<State>, mut tx: SplitSink<warp::ws::WebSocket, warp::ws::Message>) {
-        let mut rx = state.listings_channel.subscribe();
-        while let Ok(v) = rx.recv().await {
-            let Ok(json) = serde_json::to_string(&*v) else {
-                eprintln!("failed to serialize listings!");
-                continue;
-            };
-
-            if tx.send(warp::ws::Message::text(json)).await.is_err() {
-                break;
-            }
-        }
-
-        let _ = tx.close().await;
-    }
-
-    // warp handles WS ping-pong for us, but we must poll the receive part of the websocket for that to work.
-    async fn keepalive(mut rx: SplitStream<warp::ws::WebSocket>) {
-        while let Some(_) = rx.next().await {};
-    }
-
     let route = warp::path("receive")
         .and(warp::ws())
         .map(move |ws: warp::ws::Ws| {
             let state = Arc::clone(&state);
             ws.on_upgrade(move |websocket| {
-                let (tx, rx) = websocket.split();
-
-                select(
-                    Box::pin(send_listings(state, tx)),
-                    Box::pin(keepalive(rx)) // if the keepalive quits, the socket is probably closed
-                ).map(|_| ())
+                async {
+                    let mut client = WsApiClient::new(websocket, state);
+                    client.run().await;
+                }
             })
         });
 
