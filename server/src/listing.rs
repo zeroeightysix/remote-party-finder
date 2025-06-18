@@ -211,26 +211,7 @@ pub struct PartyFinderSlot {
 
 impl PartyFinderSlot {
     pub fn html_classes(&self) -> String {
-        if self.accepting == JobFlags::all() {
-            return "empty".into();
-        }
-
-        let mut classes = Vec::with_capacity(3);
-        let cjs = self.accepting.classjobs();
-
-        if cjs.iter().any(|cj| cj.role() == Some(Role::Healer)) {
-            classes.push("healer");
-        }
-
-        if cjs.iter().any(|cj| cj.role() == Some(Role::Tank)) {
-            classes.push("tank");
-        }
-
-        if cjs.iter().any(|cj| cj.role() == Some(Role::Dps)) {
-            classes.push("dps");
-        }
-
-        classes.join(" ")
+        self.accepting.html_classes()
     }
 
     pub fn codes(&self) -> String {
@@ -558,6 +539,77 @@ impl JobFlags {
         }
 
         cjs
+    }
+
+    pub fn html_classes(&self) -> String {
+        if *self == JobFlags::all() {
+            return "empty".into();
+        }
+
+        let mut classes = Vec::with_capacity(3);
+        let cjs = self.classjobs();
+
+        if cjs.iter().any(|cj| cj.role() == Some(Role::Healer)) {
+            classes.push("healer");
+        }
+
+        if cjs.iter().any(|cj| cj.role() == Some(Role::Tank)) {
+            classes.push("tank");
+        }
+
+        if cjs.iter().any(|cj| cj.role() == Some(Role::Dps)) {
+            classes.push("dps");
+        }
+
+        classes.join(" ")
+    }
+
+    pub fn get_all_jobs() -> Vec<(&'static str, Vec<JobFlags>)> {
+        vec![
+            (
+                "Tanks",
+                vec![
+                    Self::PALADIN,
+                    Self::WARRIOR,
+                    Self::DARK_KNIGHT,
+                    Self::GUNBREAKER,
+                ],
+            ),
+            (
+                "Healers",
+                vec![
+                    Self::WHITE_MAGE,
+                    Self::SCHOLAR,
+                    Self::ASTROLOGIAN,
+                    Self::SAGE,
+                ],
+            ),
+            (
+                "Melees",
+                vec![
+                    Self::MONK,
+                    Self::DRAGOON,
+                    Self::NINJA,
+                    Self::SAMURAI,
+                    Self::REAPER,
+                    Self::VIPER,
+                ],
+            ),
+            (
+                "Phys Ranged",
+                vec![Self::BARD, Self::MACHINIST, Self::DANCER],
+            ),
+            (
+                "Magic Ranged",
+                vec![
+                    Self::BLACK_MAGE,
+                    Self::SUMMONER,
+                    Self::RED_MAGE,
+                    Self::PICTOMANCER,
+                    Self::BLUE_MAGE,
+                ],
+            ),
+        ]
     }
 }
 
