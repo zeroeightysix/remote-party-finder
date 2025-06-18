@@ -23,6 +23,52 @@
     margin-top: .5em;
 }
 
+.filter-controls .roles {
+    width: max-content;
+    flex: 0 1 auto;
+    margin-left: 1em;
+}
+
+.filter-controls .roles > div > input[type=checkbox] {
+    display: none;
+}
+
+.filter-controls .roles > div > label {
+    width: 2em;
+    height: 2em;
+    opacity: 50%;
+    margin-right: 0;
+    border: 1px solid currentColor;
+}
+
+.filter-controls .roles > div > label.healer {
+    background-color: var(--healer-green);
+}
+
+.filter-controls .roles > div > label.tank {
+    background-color: var(--tank-blue);
+}
+
+.filter-controls .roles > div > label.dps {
+    background-color: var(--dps-red);
+}
+
+.filter-controls .roles > div > label:hover {
+    opacity: 75%;
+}
+
+.filter-controls .roles > div > input[type=checkbox]:checked + label {
+    border: 1px solid currentColor;
+    opacity: 100%;
+}
+
+.filter-controls .roles > div > label > svg  {
+    width: 100%;
+    height: 100%;
+    fill: var(--icon-gold);
+    opacity: 100%;
+}
+
 .js #listings {
     border-top: 2px dashed var(--text);
     margin-top: 1em;
@@ -233,5 +279,9 @@
 
     #listings > .listing .meta > .item .text {
         order: 2;
+    }
+
+    .filter-controls .roles > div > label:hover {
+        opacity: 50%;
     }
 }

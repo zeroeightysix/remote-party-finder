@@ -53,6 +53,24 @@ xivpf - listings
                             </select>
                         </label>
                     </div>
+                    <div class="roles" id="role-filter">
+                        {%- for (role, jobs) in JobFlags::get_all_jobs() %}
+                            <small>
+                                {{ role }}
+                            </small>
+                            <div>
+                                {%- for job in jobs %}
+                                {%- let code = job.classjobs()[0].code() %}
+                                    <input type="checkbox" id="{{ code }}" value="{{ job.bits() }}" ></input>
+                                    <label for="{{ code }}" title="{{ code }}" class="{{ job.html_classes() }}">
+                                        <svg viewBox="0 0 32 32">
+                                            <use href="/assets/icons.svg#{{ code }}"></use>
+                                        </svg>
+                                    </label>
+                                {%- endfor %}
+                            </div>
+                        {%- endfor %}
+                    </div>
                 </div>
             </details>
         </div>
@@ -67,7 +85,9 @@ xivpf - listings
           class="listing"
           data-id="{{ listing.id }}"
           data-centre="{{ listing.data_centre_name().unwrap_or_default() }}"
-          data-pf-category="{{ listing.html_pf_category() }}">
+          data-pf-category="{{ listing.html_pf_category() }}"
+          data-joinable-roles="{{ listing.joinable_roles() }}">
+
             <div class="left">
                 {%- let duty_class %}
                 {%- if listing.is_cross_world() %}

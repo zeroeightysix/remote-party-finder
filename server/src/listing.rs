@@ -7,7 +7,8 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use sestring::SeString;
 
-use crate::ffxiv::{Language, LocalisedText};
+use crate::ffxiv::jobs::JOBS_TO_FLAGS;
+use crate::ffxiv::{Language, LocalisedText, JOBS};
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct PartyFinderListing {
@@ -70,6 +71,34 @@ impl PartyFinderListing {
         }
 
         slots
+    }
+
+    pub fn joinable_roles(&self) -> u32 {
+        let one_player_per_job = self
+            .search_area
+            .contains(SearchAreaFlags::ONE_PLAYER_PER_JOB);
+        let mut jobs = JobFlags::empty();
+        let mut jobs_taken = JobFlags::empty();
+        for i in 0..self.slots_available as usize {
+            if i >= self.jobs_present.len() {
+                break;
+            }
+
+            match JOBS.get(&u32::from(self.jobs_present[i])) {
+                Some(cj) => {
+                    if let Some(job_taken) = JOBS_TO_FLAGS.get(cj.as_str()) {
+                        jobs_taken |= *job_taken
+                    }
+                }
+                None => jobs |= self.slots[i].accepting,
+            };
+        }
+
+        if (one_player_per_job) {
+            jobs &= !jobs_taken
+        }
+
+        jobs.bits()
     }
 
     pub fn created_world(&self) -> Option<World> {
@@ -182,26 +211,7 @@ pub struct PartyFinderSlot {
 
 impl PartyFinderSlot {
     pub fn html_classes(&self) -> String {
-        if self.accepting == JobFlags::all() {
-            return "empty".into();
-        }
-
-        let mut classes = Vec::with_capacity(3);
-        let cjs = self.accepting.classjobs();
-
-        if cjs.iter().any(|cj| cj.role() == Some(Role::Healer)) {
-            classes.push("healer");
-        }
-
-        if cjs.iter().any(|cj| cj.role() == Some(Role::Tank)) {
-            classes.push("tank");
-        }
-
-        if cjs.iter().any(|cj| cj.role() == Some(Role::Dps)) {
-            classes.push("dps");
-        }
-
-        classes.join(" ")
+        self.accepting.html_classes()
     }
 
     pub fn codes(&self) -> String {
@@ -529,6 +539,77 @@ impl JobFlags {
         }
 
         cjs
+    }
+
+    pub fn html_classes(&self) -> String {
+        if *self == JobFlags::all() {
+            return "empty".into();
+        }
+
+        let mut classes = Vec::with_capacity(3);
+        let cjs = self.classjobs();
+
+        if cjs.iter().any(|cj| cj.role() == Some(Role::Healer)) {
+            classes.push("healer");
+        }
+
+        if cjs.iter().any(|cj| cj.role() == Some(Role::Tank)) {
+            classes.push("tank");
+        }
+
+        if cjs.iter().any(|cj| cj.role() == Some(Role::Dps)) {
+            classes.push("dps");
+        }
+
+        classes.join(" ")
+    }
+
+    pub fn get_all_jobs() -> Vec<(&'static str, Vec<JobFlags>)> {
+        vec![
+            (
+                "Tanks",
+                vec![
+                    Self::PALADIN,
+                    Self::WARRIOR,
+                    Self::DARK_KNIGHT,
+                    Self::GUNBREAKER,
+                ],
+            ),
+            (
+                "Healers",
+                vec![
+                    Self::WHITE_MAGE,
+                    Self::SCHOLAR,
+                    Self::ASTROLOGIAN,
+                    Self::SAGE,
+                ],
+            ),
+            (
+                "Melees",
+                vec![
+                    Self::MONK,
+                    Self::DRAGOON,
+                    Self::NINJA,
+                    Self::SAMURAI,
+                    Self::REAPER,
+                    Self::VIPER,
+                ],
+            ),
+            (
+                "Phys Ranged",
+                vec![Self::BARD, Self::MACHINIST, Self::DANCER],
+            ),
+            (
+                "Magic Ranged",
+                vec![
+                    Self::BLACK_MAGE,
+                    Self::SUMMONER,
+                    Self::RED_MAGE,
+                    Self::PICTOMANCER,
+                    Self::BLUE_MAGE,
+                ],
+            ),
+        ]
     }
 }
 
