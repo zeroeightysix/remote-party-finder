@@ -67,7 +67,9 @@ xivpf - listings
           class="listing"
           data-id="{{ listing.id }}"
           data-centre="{{ listing.data_centre_name().unwrap_or_default() }}"
-          data-pf-category="{{ listing.html_pf_category() }}">
+          data-pf-category="{{ listing.html_pf_category() }}"
+          data-joinable-roles="{{ listing.joinable_roles() }}">
+
             <div class="left">
                 {%- let duty_class %}
                 {%- if listing.is_cross_world() %}

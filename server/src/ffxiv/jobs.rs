@@ -1,3 +1,4 @@
+use crate::listing::JobFlags;
 use ffxiv_types::jobs::{Class, ClassJob, Job, NonCombatJob};
 use std::collections::HashMap;
 
@@ -45,5 +46,39 @@ lazy_static::lazy_static! {
         40 => ClassJob::Job(Job::Sage),
         41 => ClassJob::Job(Job::Viper),
         42 => ClassJob::Job(Job::Pictomancer),
+    };
+
+    pub static ref JOBS_TO_FLAGS: HashMap<&'static str, JobFlags> = maplit::hashmap! {
+        ClassJob::Class(Class::Gladiator).as_str() => JobFlags::GLADIATOR,
+        ClassJob::Class(Class::Pugilist).as_str() => JobFlags::PUGILIST,
+        ClassJob::Class(Class::Marauder).as_str() => JobFlags::MARAUDER,
+        ClassJob::Class(Class::Lancer).as_str() => JobFlags::LANCER,
+        ClassJob::Class(Class::Archer).as_str() => JobFlags::ARCHER,
+        ClassJob::Class(Class::Conjurer).as_str() => JobFlags::CONJURER,
+        ClassJob::Class(Class::Thaumaturge).as_str() => JobFlags::THAUMATURGE,
+        ClassJob::Job(Job::Paladin).as_str() => JobFlags::PALADIN,
+        ClassJob::Job(Job::Monk).as_str() => JobFlags::MONK,
+        ClassJob::Job(Job::Warrior).as_str() => JobFlags::WARRIOR,
+        ClassJob::Job(Job::Dragoon).as_str() => JobFlags::DRAGOON,
+        ClassJob::Job(Job::Bard).as_str() => JobFlags::BARD,
+        ClassJob::Job(Job::WhiteMage).as_str() => JobFlags::WHITE_MAGE,
+        ClassJob::Job(Job::BlackMage).as_str() => JobFlags::BLACK_MAGE,
+        ClassJob::Class(Class::Arcanist).as_str() => JobFlags::ARCANIST,
+        ClassJob::Job(Job::Summoner).as_str() => JobFlags::SUMMONER,
+        ClassJob::Job(Job::Scholar).as_str() => JobFlags::SCHOLAR,
+        ClassJob::Class(Class::Rogue).as_str() => JobFlags::ROGUE,
+        ClassJob::Job(Job::Ninja).as_str() => JobFlags::NINJA,
+        ClassJob::Job(Job::Machinist).as_str() => JobFlags::MACHINIST,
+        ClassJob::Job(Job::DarkKnight).as_str() => JobFlags::DARK_KNIGHT,
+        ClassJob::Job(Job::Astrologian).as_str() => JobFlags::ASTROLOGIAN,
+        ClassJob::Job(Job::Samurai).as_str() => JobFlags::SAMURAI,
+        ClassJob::Job(Job::RedMage).as_str() => JobFlags::RED_MAGE,
+        ClassJob::Job(Job::BlueMage).as_str() => JobFlags::BLUE_MAGE,
+        ClassJob::Job(Job::Gunbreaker).as_str() => JobFlags::GUNBREAKER,
+        ClassJob::Job(Job::Dancer).as_str() => JobFlags::DANCER,
+        ClassJob::Job(Job::Reaper).as_str() => JobFlags::REAPER,
+        ClassJob::Job(Job::Sage).as_str() => JobFlags::SAGE,
+        ClassJob::Job(Job::Viper).as_str() => JobFlags::VIPER,
+        ClassJob::Job(Job::Pictomancer).as_str() => JobFlags::PICTOMANCER,
     };
 }
