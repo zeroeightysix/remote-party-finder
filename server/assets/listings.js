@@ -4,6 +4,7 @@
     const state = {
         allowed: [],
         centre: 'All',
+        roles: 0n,
         list: null,
         lang: null,
     };
@@ -61,6 +62,8 @@
         let dataCentre = document.getElementById('data-centre-filter');
         dataCentre.value = state.centre;
 
+        state.roles = 0n;
+
         let language = document.getElementById('language');
         if (state.lang === null) {
             state.lang = language.dataset.accept;
@@ -97,7 +100,11 @@
             return state.centre === "All" || state.centre === item.values().centre;
         }
 
-        state.list.filter(item => dataCentreFilter(item) && categoryFilter(item));
+        function roleFilter(item) {
+            return state.roles === 0n || state.roles & BigInt(item.elm.dataset.joinableRoles)
+        }
+
+        state.list.filter(item => dataCentreFilter(item) && categoryFilter(item) && roleFilter(item));
     }
 
     function setUpDataCentreFilter() {
@@ -155,11 +162,26 @@
         });
     }
 
+    function setUpRoleFilter() {
+        let select = document.getElementById('role-filter');
+
+        select.addEventListener('change', (event) => {
+            let value = BigInt(event.target.value);
+            if (event.target.checked) {
+                state.roles |= value;
+            } else {
+                state.roles &= ~value;
+            }
+            refilter();
+        });
+    }
+
     addJsClass();
     saveLoadState();
     reflectState();
     state.list = setUpList();
     setUpDataCentreFilter();
     setUpCategoryFilter();
+    setUpRoleFilter();
     refilter();
 })();
