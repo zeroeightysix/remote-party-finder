@@ -4,6 +4,7 @@
     const state = {
         allowed: [],
         centre: 'All',
+        roles: 0n,
         list: null,
         lang: null,
     };
@@ -16,7 +17,8 @@
         let saved = localStorage.getItem('state');
         if (saved !== null) {
             try {
-                saved = JSON.parse(saved);
+                saved = JSON.parse(saved, (key, value) => key === 'roles' ?
+                    BigInt(value) : value);
                 if (!Array.isArray(saved.allowed)) {
                     saved = {};
                     stateWasNull = true;
@@ -43,7 +45,8 @@
                 copy[key] = state[key];
             }
 
-            localStorage.setItem('state', JSON.stringify(copy));
+            localStorage.setItem('state', JSON.stringify(copy, (_, value) =>
+                typeof value === 'bigint' ? value.toString() : value));
         });
     }
 
@@ -60,6 +63,23 @@
 
         let dataCentre = document.getElementById('data-centre-filter');
         dataCentre.value = state.centre;
+
+        if (stateWasNull || state.roles <= 0n) {
+            state.roles = 0n;
+        } else {
+            let roleFilterInputs = document.getElementById('role-filter')
+                .getElementsByTagName('input');
+            let newRolesState = 0n;
+            for (let input of roleFilterInputs) {
+                let value = BigInt(input.value);
+                if (state.roles & value) {
+                    input.checked = true;
+                    newRolesState |= value;
+                }
+            }
+            // In case any unnecessary bits were set
+            state.roles = newRolesState;
+        }
 
         let language = document.getElementById('language');
         if (state.lang === null) {
@@ -97,7 +117,11 @@
             return state.centre === "All" || state.centre === item.values().centre;
         }
 
-        state.list.filter(item => dataCentreFilter(item) && categoryFilter(item));
+        function roleFilter(item) {
+            return state.roles === 0n || state.roles & BigInt(item.elm.dataset.joinableRoles);
+        }
+
+        state.list.filter(item => dataCentreFilter(item) && categoryFilter(item) && roleFilter(item));
     }
 
     function setUpDataCentreFilter() {
@@ -155,11 +179,26 @@
         });
     }
 
+    function setUpRoleFilter() {
+        let select = document.getElementById('role-filter');
+
+        select.addEventListener('change', (event) => {
+            let value = BigInt(event.target.value);
+            if (event.target.checked) {
+                state.roles |= value;
+            } else {
+                state.roles &= ~value;
+            }
+            refilter();
+        });
+    }
+
     addJsClass();
     saveLoadState();
     reflectState();
     state.list = setUpList();
     setUpDataCentreFilter();
     setUpCategoryFilter();
+    setUpRoleFilter();
     refilter();
 })();

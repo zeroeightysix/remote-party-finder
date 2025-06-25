@@ -8,6 +8,7 @@
 }
 
 .filter-controls .control {
+    display: flex;
     width: max-content;
     flex: 0 1 auto;
     margin-left: 1em;
@@ -19,8 +20,55 @@
 }
 
 .filter-controls .control > label > * {
-    flex: 0 1 auto;
+    flex: 1 1 auto;
+    margin-bottom: 0;
     margin-top: .5em;
+}
+
+.filter-controls .roles {
+    width: max-content;
+    flex: 0 1 auto;
+    margin-left: 1em;
+}
+
+.filter-controls .roles > div > input[type=checkbox] {
+    display: none;
+}
+
+.filter-controls .roles > div > label {
+    width: 2em;
+    height: 2em;
+    opacity: 50%;
+    margin-right: 0;
+    border: 1px solid currentColor;
+}
+
+.filter-controls .roles > div > label.healer {
+    background-color: var(--healer-green);
+}
+
+.filter-controls .roles > div > label.tank {
+    background-color: var(--tank-blue);
+}
+
+.filter-controls .roles > div > label.dps {
+    background-color: var(--dps-red);
+}
+
+.filter-controls .roles > div > label:hover {
+    opacity: 75%;
+}
+
+.filter-controls .roles > div > input[type=checkbox]:checked + label {
+    border: 1px solid currentColor;
+    opacity: 100%;
+}
+
+.filter-controls .roles > div > label > svg  {
+    width: 100%;
+    height: 100%;
+    fill: var(--icon-gold);
+    opacity: 100%;
 }
 
 .js #listings {
@@ -233,5 +281,9 @@
 
     #listings > .listing .meta > .item .text {
         order: 2;
+    }
+
+    .filter-controls .roles > div > label:hover {
+        opacity: 50%;
     }
 }
