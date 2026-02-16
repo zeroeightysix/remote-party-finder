@@ -1,5 +1,6 @@
 use crate::ffxiv::Language;
 use crate::listing::JobFlags;
+use crate::listing::LootRuleFlags;
 use crate::listing::PartyFinderCategory;
 use crate::listing_container::QueriedListing;
 use crate::sestring_ext::SeStringExt;

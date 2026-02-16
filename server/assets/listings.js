@@ -5,6 +5,8 @@
         allowed: [],
         centre: 'All',
         roles: 0n,
+        lootRules: 0n,
+        lootRulesIncludeNone: false,
         list: null,
         lang: null,
     };
@@ -17,8 +19,8 @@
         let saved = localStorage.getItem('state');
         if (saved !== null) {
             try {
-                saved = JSON.parse(saved, (key, value) => key === 'roles' ?
-                    BigInt(value) : value);
+                saved = JSON.parse(saved, (key, value) =>
+                    (key === 'roles' || key === 'lootRules') ? BigInt(value) : value);
                 if (!Array.isArray(saved.allowed)) {
                     saved = {};
                     stateWasNull = true;
@@ -81,6 +83,21 @@
             state.roles = newRolesState;
         }
 
+        if (stateWasNull || state.lootRules === undefined) {
+            state.lootRules = 0n;
+            state.lootRulesIncludeNone = false;
+        } else {
+            let lootRulesSelect = document.getElementById('loot-rules-filter');
+            if (lootRulesSelect) {
+                for (let option of lootRulesSelect.options) {
+                    const val = BigInt(option.value);
+                    option.selected = val === 0n
+                        ? state.lootRulesIncludeNone
+                        : (state.lootRules & val) !== 0n;
+                }
+            }
+        }
+
         let language = document.getElementById('language');
         if (state.lang === null) {
             state.lang = language.dataset.accept;
@@ -125,7 +142,19 @@
             return state.roles === 0n || state.roles & BigInt(item.elm.dataset.joinableRoles);
         }
 
-        state.list.filter(item => dataCentreFilter(item) && categoryFilter(item) && roleFilter(item));
+        function lootRuleFilter(item) {
+            const itemBits = BigInt(item.elm.dataset.lootRules || 0);
+            const hasNoRules = itemBits === 0n;
+            const hasSelectedRules = state.lootRules !== 0n &&
+                (state.lootRules & itemBits) !== 0n;
+            if (!state.lootRulesIncludeNone && state.lootRules === 0n) {
+                return true;
+            }
+            return (state.lootRulesIncludeNone && hasNoRules) || hasSelectedRules;
+        }
+
+        state.list.filter(item =>
+            dataCentreFilter(item) && categoryFilter(item) && roleFilter(item) && lootRuleFilter(item));
     }
 
     function setUpDataCentreFilter() {
@@ -197,6 +226,29 @@
         });
     }
 
+    function setUpLootRulesFilter() {
+        let select = document.getElementById('loot-rules-filter');
+        if (!select) return;
+
+        select.addEventListener('change', () => {
+            let lootRules = 0n;
+            let lootRulesIncludeNone = false;
+            for (let option of select.options) {
+                if (option.selected) {
+                    const val = BigInt(option.value);
+                    if (val === 0n) {
+                        lootRulesIncludeNone = true;
+                    } else {
+                        lootRules |= val;
+                    }
+                }
+            }
+            state.lootRules = lootRules;
+            state.lootRulesIncludeNone = lootRulesIncludeNone;
+            refilter();
+        });
+    }
+
     addJsClass();
     saveLoadState();
     reflectState();
@@ -204,5 +256,6 @@
     setUpDataCentreFilter();
     setUpCategoryFilter();
     setUpRoleFilter();
+    setUpLootRulesFilter();
     refilter();
 })();

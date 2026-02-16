@@ -53,6 +53,16 @@ xivpf - listings
                             </select>
                         </label>
                     </div>
+                    <div class="control">
+                        <label>
+                            Loot Rules
+                            <select multiple id="loot-rules-filter">
+                                {%- for (name, flag, _id) in LootRuleFlags::get_all() %}
+                                <option value="{{ flag.bits() }}">{{ name.text(lang) }}</option>
+                                {%- endfor %}
+                            </select>
+                        </label>
+                    </div>
                     <div class="roles" id="role-filter">
                         {%- for (role, jobs) in JobFlags::get_all_jobs() %}
                             <small>
@@ -87,7 +97,8 @@ xivpf - listings
           data-centre="{{ listing.data_centre_name().unwrap_or_default() }}"
           data-pf-category="{{ listing.html_pf_category() }}"
           data-joinable-roles="{{ listing.joinable_roles() }}"
-          data-num-parties="{{ listing.num_parties }}">
+          data-num-parties="{{ listing.num_parties }}"
+          data-loot-rules="{{ listing.loot_rules.bits() }}">
 
             <div class="left">
                 {%- let duty_class %}

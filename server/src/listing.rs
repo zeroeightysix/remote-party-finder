@@ -170,6 +170,14 @@ impl PartyFinderListing {
             flags.push("[One Player per Job]");
         }
 
+        if self.loot_rules.contains(LootRuleFlags::GREED_ONLY) {
+            flags.push("[Greed Only]");
+        }
+
+        if self.loot_rules.contains(LootRuleFlags::LOOTMASTER) {
+            flags.push("[Lootmaster]");
+        }
+
         (colour_class, flags.join(""))
     }
 
@@ -361,6 +369,73 @@ bitflags! {
         const NONE = 0;
         const GREED_ONLY = 1 << 0;
         const LOOTMASTER = 1 << 1;
+    }
+}
+
+impl LootRuleFlags {
+    pub fn html_classes(&self) -> String {
+        if *self == LootRuleFlags::all() {
+            return "empty".into();
+        }
+
+        let mut classes = Vec::with_capacity(2);
+        if self.contains(Self::GREED_ONLY) {
+            classes.push("greed-only");
+        }
+        if self.contains(Self::LOOTMASTER) {
+            classes.push("lootmaster");
+        }
+        classes.join(" ")
+    }
+
+    pub fn name(self) -> LocalisedText {
+        match self {
+            Self::GREED_ONLY => LocalisedText { en: "Greed Only", ja: "グレードのみ", de: "Greed Only", fr: "Greed Only" },
+            Self::LOOTMASTER => LocalisedText { en: "Lootmaster", ja: "ロットマスター", de: "Lootmaster", fr: "Lootmaster" },
+            Self::NONE | _ => LocalisedText { en: "", ja: "", de: "", fr: "" },
+        }
+    }
+
+    pub fn get_all_loot_rules() -> Vec<(LocalisedText, Vec<LootRuleFlags>)> {
+        vec![
+            (Self::GREED_ONLY.name(), vec![Self::GREED_ONLY]),
+            (Self::LOOTMASTER.name(), vec![Self::LOOTMASTER]),
+        ]
+    }
+    
+    pub fn get_all() -> Vec<(LocalisedText, LootRuleFlags, &'static str)> {
+        vec![
+            (
+                LocalisedText {
+                    en: "None",
+                    ja: "なし",
+                    de: "Keine",
+                    fr: "Aucune",
+                },
+                Self::NONE,
+                "none",
+            ),
+            (
+                LocalisedText {
+                    en: "Greed Only",
+                    ja: "グリード専用",
+                    de: "Nur Gier",
+                    fr: "Cupidité seule",
+                },
+                Self::GREED_ONLY,
+                "greed-only",
+            ),
+            (
+                LocalisedText {
+                    en: "Lootmaster",
+                    ja: "ルートマスター",
+                    de: "Beutemeister",
+                    fr: "Maître du butin",
+                },
+                Self::LOOTMASTER,
+                "lootmaster",
+            ),
+        ]
     }
 }
 
@@ -641,6 +716,8 @@ impl JobFlags {
         ]
     }
 }
+
+
 
 #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq)]
 pub enum PartyFinderCategory {
