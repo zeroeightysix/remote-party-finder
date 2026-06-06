@@ -290,6 +290,11 @@ internal class Program
                 // Blue Mage should be Job
                 value = $"ClassJob::Job(Job::{name})";
             }
+            else if (cj.RowId == 43)
+            {
+                // Temporarily disable support for beastmaster.
+                continue;
+            }
             else
             {
                 // All other combat jobs (21+ except the special cases above)
@@ -324,7 +329,7 @@ internal class Program
             // Determine job type for combat jobs only (same logic as above)
             string classJobStr;
             string flagName;
-            
+
             if (cj.RowId >= 1 && cj.RowId <= 7)
             {
                 // Base combat classes (1-7)
@@ -373,7 +378,11 @@ internal class Program
                 classJobStr = $"ClassJob::Job(Job::{name})";
                 flagName = GetFlagName(name);
             }
-            else
+            else if (cj.RowId == 43)
+            {
+                // Temporarily disable support for beastmaster.
+                continue;
+            }            else
             {
                 // All other combat jobs (21+ except the special cases above)
                 classJobStr = $"ClassJob::Job(Job::{name})";
@@ -435,6 +444,8 @@ internal class Program
 
     private string GenerateWorlds()
     {
+        var DISABLED_WORLDS = new uint[] { 2, 3, 6, 110, 112, 114, 142, 416, 417, 418, 419, 2075, 2076, 2077, 2078, 2080, 2081, 3000, 3001 };
+
         var sb = DefaultHeader();
         sb.Append("use ffxiv_types::World;\n\n");
         sb.Append("lazy_static::lazy_static! {\n");
@@ -442,7 +453,7 @@ internal class Program
 
         foreach (var world in this.Data[Language.English].GetExcelSheet<World>()!)
         {
-            if (world.RowId == 0 || !world.IsPublic || world.UserType == 0 || world.DataCenter.RowId == 0 || world.RowId == 3000 || world.RowId == 3001)
+            if (world.RowId == 0 || !world.IsPublic || world.UserType == 0 || world.DataCenter.RowId == 0 || DISABLED_WORLDS.Contains(world.RowId))
             {
                 continue;
             }
@@ -506,9 +517,9 @@ internal class Program
             // Skip group 61 entries
             if (row.Group == 61)
                 continue;
-            
+
             var lookup = row.LookupTable.ToString().Replace("<num(", "").Replace(")>", ""); // 🙂
-            
+
             if (lookup is not ("" or "@"))
             {
                 string sheetName;
