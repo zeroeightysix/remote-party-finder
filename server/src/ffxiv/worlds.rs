@@ -3,8 +3,6 @@ use ffxiv_types::World;
 
 lazy_static::lazy_static! {
     pub static ref WORLDS: HashMap<u32, World> = maplit::hashmap! {
-        3 => World::c-whiteae,
-        6 => World::c-funereus,
         21 => World::Ravana,
         22 => World::Bismarck,
         23 => World::Asura,
@@ -78,10 +76,6 @@ lazy_static::lazy_static! {
         97 => World::Ragnarok,
         98 => World::Ridill,
         99 => World::Sargatanas,
-        110 => World::b-tirica,
-        112 => World::b-chiriri,
-        114 => World::b-jugularis,
-        142 => World::b-cyanoptera,
         400 => World::Sagittarius,
         401 => World::Phantom,
         402 => World::Alpha,
@@ -98,15 +92,5 @@ lazy_static::lazy_static! {
         413 => World::Innocence,
         414 => World::Pixie,
         415 => World::Tycoon,
-        416 => World::Wyvern,
-        417 => World::Lakshmi,
-        418 => World::Eden,
-        419 => World::Syldra,
-        2075 => World::카벙클,
-        2076 => World::초코보,
-        2077 => World::모그리,
-        2078 => World::톤베리,
-        2080 => World::펜리르,
-        2081 => World::오메가,
     };
 }
