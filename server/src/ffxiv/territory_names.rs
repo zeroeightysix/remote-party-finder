@@ -6483,6 +6483,12 @@ lazy_static::lazy_static! {
             de: "Des Händlers kuriose Liebesmüh",
             fr: "Contes du Camelot annexes",
         },
+        1319 => LocalisedText {
+            en: "Auxesia",
+            ja: "惑星アウクセシア",
+            de: "Auxesia",
+            fr: "Auxesia",
+        },
         1320 => LocalisedText {
             en: "Ring Noir",
             ja: "リング・オブ・ヴァンプ",
@@ -6626,6 +6632,12 @@ lazy_static::lazy_static! {
             ja: "無の領域",
             de: "Nichts-Territorium",
             fr: "Domaine du néant",
+        },
+        1363 => LocalisedText {
+            en: "Sigmascape V4.0",
+            ja: "被検世界「シグマ」V4.0",
+            de: "Sigmametrie 4.0",
+            fr: "Sigmastice v4.0",
         },
         1366 => LocalisedText {
             en: "Dusk Vigil",

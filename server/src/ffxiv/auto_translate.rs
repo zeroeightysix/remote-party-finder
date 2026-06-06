@@ -4453,7 +4453,31 @@ lazy_static::lazy_static! {
             en: "Oizys dronebit",
             ja: "オイジュス・ドローンチップ",
             de: "Oizys-Drohnenchip",
-            fr: "jetons de drone",
+            fr: "jetons de drone (Oizys)",
+        },
+        (22, 1670) => LocalisedText {
+            en: "Auxesia credit",
+            ja: "アウクセシアクレジット",
+            de: "Auxesia-Asche",
+            fr: "crédits d'Auxesia",
+        },
+        (22, 1671) => LocalisedText {
+            en: "Auxesia dronebit",
+            ja: "アウクセシア・ドローンチップ",
+            de: "Auxesia-Drohnenchip",
+            fr: "jetons de drone (Auxesia)",
+        },
+        (22, 1672) => LocalisedText {
+            en: "tool mastery mission",
+            ja: "マスターシップミッション",
+            de: "Meistermission",
+            fr: "missions de maîtrise",
+        },
+        (22, 1673) => LocalisedText {
+            en: "tool mastery point",
+            ja: "マスターシップポイント",
+            de: "Meisterpunkt",
+            fr: "points de maîtrise",
         },
         (23, 1900) => LocalisedText {
             en: "【Primals】",
@@ -7995,6 +8019,12 @@ lazy_static::lazy_static! {
             de: "Blumerich",
             fr: "petitenfleuri",
         },
+        (49, 409) => LocalisedText {
+            en: "interstellarleafkin",
+            ja: "スペースリフキン",
+            de: "Weltall-Blättrich",
+            fr: "sangfeuillestellaire",
+        },
         (49, 411) => LocalisedText {
             en: "dynamite",
             ja: "ダイナマイト",
@@ -8061,11 +8091,35 @@ lazy_static::lazy_static! {
             de: "TuralischerSchneemann",
             fr: "bonhommedeneigeturalien",
         },
+        (49, 438) => LocalisedText {
+            en: "cosmicarmoredweaponbeta",
+            ja: "コスモ・アームドウェポン改",
+            de: "Kosmo-PanzerwaffeMk-II",
+            fr: "armeblindéecosmique2.0",
+        },
+        (49, 440) => LocalisedText {
+            en: "cosmicpredator",
+            ja: "コスモ・プレデター",
+            de: "Kosmo-Prädator",
+            fr: "prédateurcosmique",
+        },
         (49, 444) => LocalisedText {
             en: "wingsofnihility",
             ja: "ウィング・オブ・ニヒリティ",
             de: "FlügeldesNihilismus",
             fr: "paired'ailesdunihilisme",
+        },
+        (49, 445) => LocalisedText {
+            en: "excavatingvacuumsuit",
+            ja: "掘採型パワーローダー",
+            de: "SternenläuferMk-B",
+            fr: "mécanocosmiqueexcavateur",
+        },
+        (49, 446) => LocalisedText {
+            en: "carbidegreywarploader",
+            ja: "グレーホイールローダー",
+            de: "SternenebnerMk-G",
+            fr: "déblayeusecosmiquegrise",
         },
         (50, 1) => LocalisedText {
             en: "gladiator",
@@ -11306,6 +11360,12 @@ lazy_static::lazy_static! {
             ja: "ウィンダス：ザ・サードウォーク",
             de: "Windurst:DiedritteEtappe",
             fr: "Windurst-Latroisièmeperambulation",
+        },
+        (51, 5551) => LocalisedText {
+            en: "Auxesia",
+            ja: "惑星アウクセシア",
+            de: "Auxesia",
+            fr: "Auxesia",
         },
         (54, 1) => LocalisedText {
             en: "Halone,theFury",
@@ -18531,6 +18591,18 @@ lazy_static::lazy_static! {
             de: "Schaumsturm",
             fr: "Tempêtedebulles",
         },
+        (60, 207) => LocalisedText {
+            en: "AuroralFlares",
+            ja: "幻極光",
+            de: "Chlorophyllschein",
+            fr: "Ondéelumineuse",
+        },
+        (60, 208) => LocalisedText {
+            en: "Floracane",
+            ja: "幻花風",
+            de: "Blütengestöber",
+            fr: "Brisedepétales",
+        },
         (62, 217) => LocalisedText {
             en: "ALIASES:
 　/macrocancel,/mcancel
@@ -24228,6 +24300,12 @@ Annulelamacroencoursàpartirdelafenêtredediscussion.",
             de: "JinbeiJr.",
             fr: "jinbei",
         },
+        (65, 583) => LocalisedText {
+            en: "lite-loader",
+            ja: "ホイットローダー",
+            de: "Sternchenebner",
+            fr: "mini-déblayeusecosmique",
+        },
         (65, 584) => LocalisedText {
             en: "caprino",
             ja: "カプリーヌ",
@@ -24239,6 +24317,12 @@ Annulelamacroencoursàpartirdelafenêtredediscussion.",
             ja: "マメット・プリッシュ",
             de: "Prishe-Puppe",
             fr: "Prisheminiature",
+        },
+        (65, 591) => LocalisedText {
+            en: "budvi",
+            ja: "ナギュリィ・ジャーム",
+            de: "Nagy",
+            fr: "Germylvi",
         },
         (67, 50) => LocalisedText {
             en: "RoyalAuthorityCombo",
@@ -29483,6 +29567,12 @@ Annulelamacroencoursàpartirdelafenêtredediscussion.",
             ja: "ウィンダス：ザ・サードウォーク",
             de: "Windurst: Die dritte Etappe",
             fr: "Windurst - La troisième perambulation",
+        },
+        (24, 5200) => LocalisedText {
+            en: "Dancing Mad (Ultimate)",
+            ja: "絶妖星乱舞",
+            de: "Tanzender Wahn (fatal)",
+            fr: "Danse démente (fatal)",
         },
         (24, 5201) => LocalisedText {
             en: "Archeia Harmonias",
