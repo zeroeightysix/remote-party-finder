@@ -63,7 +63,7 @@ impl Language {
             })
             .collect();
         parts.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(Ordering::Less));
-        if parts.len() == 0 {
+        if parts.is_empty() {
             return Self::English;
         }
 
@@ -187,7 +187,7 @@ pub fn duty_name<'a>(
                 Language::French => "JACTA",
             })
         }
-        (_, DutyCategory::GoldSaucer) if duty >= 12 && duty <= 19 => {
+        (_, DutyCategory::GoldSaucer) if (12..=19).contains(&duty) => {
             // in the sheet, the order is sagolii, del sol, tranquil, random
             // in PF, random comes first:
             let row = match duty {
@@ -200,7 +200,7 @@ pub fn duty_name<'a>(
                 return Cow::from(info.name.text(&lang));
             }
         }
-        (_, DutyCategory::GoldSaucer) if duty >= 20 && duty <= 26 => {
+        (_, DutyCategory::GoldSaucer) if (20..=26).contains(&duty) => {
             let row = match duty {
                 20 => 195,
                 21 => 756,

@@ -79,7 +79,7 @@ impl State {
         let task_state = Arc::clone(&state);
         tokio::task::spawn(async move {
             loop {
-                let all_time = match self::stats::get_stats(&*task_state).await {
+                let all_time = match self::stats::get_stats(&task_state).await {
                     Ok(stats) => stats,
                     Err(e) => {
                         eprintln!("error generating stats: {:#?}", e);
@@ -87,7 +87,7 @@ impl State {
                     }
                 };
 
-                let seven_days = match self::stats::get_stats_seven_days(&*task_state).await {
+                let seven_days = match self::stats::get_stats_seven_days(&task_state).await {
                     Ok(stats) => stats,
                     Err(e) => {
                         eprintln!("error generating stats: {:#?}", e);
