@@ -1,11 +1,7 @@
 use std::{cmp::Ordering, convert::Infallible, sync::Arc, time::Duration};
 
 use anyhow::{Context, Result};
-use mongodb::{
-    options::IndexOptions
-    ,
-    Client as MongoClient, Collection, IndexModel,
-};
+use mongodb::{options::IndexOptions, Client as MongoClient, Collection, IndexModel};
 use tokio::sync::broadcast::Sender;
 use tokio::sync::RwLock;
 use warp::{filters::BoxedFilter, http::Uri, Filter, Reply};
@@ -289,7 +285,8 @@ async fn stats_logic(
                 stats.all_time
             },
             lang,
-        }.into_response(),
+        }
+        .into_response(),
         None => "Stats haven't been calculated yet. Please wait :(".into_response(),
     })
 }

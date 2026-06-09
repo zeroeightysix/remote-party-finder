@@ -166,7 +166,9 @@ fn api_objective_mapping() {
     assert!(loot.objective.contains(ObjectiveFlags::LOOT));
 
     let duty_completion = listing_with_objective(ObjectiveFlags::DUTY_COMPLETION);
-    assert!(duty_completion.objective.contains(ObjectiveFlags::DUTY_COMPLETION));
+    assert!(duty_completion
+        .objective
+        .contains(ObjectiveFlags::DUTY_COMPLETION));
     assert!(!duty_completion.objective.contains(ObjectiveFlags::PRACTICE));
     assert!(!duty_completion.objective.contains(ObjectiveFlags::LOOT));
 }

@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use super::LocalisedText;
+use std::collections::HashMap;
 
 lazy_static::lazy_static! {
     pub static ref TREASURE_MAPS: HashMap<u32, LocalisedText> = maplit::hashmap! {

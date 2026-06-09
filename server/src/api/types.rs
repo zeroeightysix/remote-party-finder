@@ -1,72 +1,21 @@
-use crate::ffxiv;
-use crate::ffxiv::duties::DutyInfo;
-use crate::ffxiv::Language;
-use crate::listing::{ConditionFlags, DutyFinderSettingsFlags, LootRuleFlags, ObjectiveFlags, PartyFinderListing, PartyFinderSlot, SearchAreaFlags};
-use crate::listing_container::QueriedListing;
-use crate::mongo::get_current_listings;
-use crate::sestring_ext::SeStringExt;
-use crate::web::State;
-use crate::ws::WsApiClient;
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 use sestring::SeString;
-use std::convert::Infallible;
-use std::sync::Arc;
-use warp::filters::BoxedFilter;
-use warp::http::StatusCode;
-use warp::{Filter, Reply};
 
-pub fn api(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
-    warp::path("api")
-        .and(ws(state.clone()).or(listings(state.clone())))
-        .boxed()
-}
-
-fn listings(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
-    async fn logic(state: Arc<State>) -> Result<warp::reply::Response, Infallible> {
-        let listings = get_current_listings(state.collection()).await;
-
-        match listings {
-            Ok(listings) => {
-                let listings: Vec<ApiReadableListingContainer> = listings.into_iter()
-                    .map(|listing| listing.into())
-                    .collect();
-                Ok(warp::reply::json(&listings).into_response())
-            },
-            Err(_) => Ok(warp::reply::with_status(
-                warp::reply(),
-                StatusCode::INTERNAL_SERVER_ERROR,
-            )
-            .into_response()),
-        }
-    }
-
-    warp::get()
-        .and(warp::path("listings"))
-        .and(warp::path::end())
-        .and_then(move || logic(state.clone()))
-        .boxed()
-}
-
-fn ws(state: Arc<State>) -> BoxedFilter<(impl Reply,)> {
-    let route =
-        warp::path("ws")
-            .and(warp::ws())
-            .and(warp::path::end())
-            .map(move |ws: warp::ws::Ws| {
-                let state = Arc::clone(&state);
-                ws.on_upgrade(move |websocket| async move {
-                    WsApiClient::run(state, websocket).await;
-                })
-            });
-
-    warp::get().and(route).boxed()
-}
+use crate::{
+    ffxiv::{self, Language},
+    listing::{
+        ConditionFlags, DutyFinderSettingsFlags, LootRuleFlags, ObjectiveFlags, PartyFinderListing,
+        PartyFinderSlot, SearchAreaFlags,
+    },
+    listing_container::QueriedListing,
+    sestring_ext::SeStringExt,
+};
 
 /// A version of `QueriedListingContainer` with more sensible formatting,
 /// implementation details hidden, and resolved names for duties, etc.
 #[derive(Serialize)]
-struct ApiReadableListingContainer {
+pub struct ApiReadableListingContainer {
     created_at: DateTime<Utc>,
     updated_at: DateTime<Utc>,
     time_left: f64,
@@ -85,7 +34,7 @@ impl From<QueriedListing> for ApiReadableListingContainer {
 }
 
 #[derive(Serialize)]
-struct ApiReadableListing {
+pub struct ApiReadableListing {
     id: u32,
     // pub content_id: u32,
     recruiter: String,
@@ -113,36 +62,18 @@ struct ApiReadableListing {
     slots_filled: Vec<Option<&'static str>>, // None if not filled, otherwise the job code
 }
 
-#[derive(Serialize)]
-struct ApiLocalizedString {
-    en: String,
-    ja: String,
-    de: String,
-    fr: String,
-}
-
-impl From<SeString> for ApiLocalizedString {
-    fn from(value: SeString) -> Self {
-        Self {
-            en: value.full_text(&Language::English),
-            ja: value.full_text(&Language::Japanese),
-            de: value.full_text(&Language::German),
-            fr: value.full_text(&Language::French),
-        }
-    }
-}
-
 impl From<PartyFinderListing> for ApiReadableListing {
     fn from(value: PartyFinderListing) -> Self {
-        let duty_info = ffxiv::duty(value.duty as u32)
-            .map(|di| di.into());
-        let slots_filled = value.jobs_present
+        let duty_info = ffxiv::duty(value.duty as u32).map(|di| di.into());
+        let slots_filled = value
+            .jobs_present
             .into_iter()
-            .map(|job| if job == 0 {
-                None
-            } else {
-                ffxiv::jobs::JOBS.get(&(job as u32))
-                    .map(|j| j.code())
+            .map(|job| {
+                if job == 0 {
+                    None
+                } else {
+                    ffxiv::jobs::JOBS.get(&(job as u32)).map(|j| j.code())
+                }
             })
             .collect();
 
@@ -174,7 +105,7 @@ impl From<PartyFinderListing> for ApiReadableListing {
 }
 
 #[derive(Serialize)]
-struct ApiReadableWorld {
+pub struct ApiReadableWorld {
     id: u16,
     name: &'static str,
 }
@@ -183,23 +114,24 @@ impl From<u16> for ApiReadableWorld {
     fn from(value: u16) -> Self {
         Self {
             id: value,
-            name: crate::ffxiv::WORLDS.get(&(value as u32))
+            name: crate::ffxiv::WORLDS
+                .get(&(value as u32))
                 .map(|w| w.as_str())
-                .unwrap_or("Unknown")
+                .unwrap_or("Unknown"),
         }
     }
 }
 
 #[derive(Serialize)]
-struct ApiReadableDutyInfo {
+pub struct ApiReadableDutyInfo {
     pub name: ffxiv::LocalisedText,
     pub high_end: bool,
     pub content_kind_id: u32,
     pub content_kind: String,
 }
 
-impl From<&DutyInfo> for ApiReadableDutyInfo {
-    fn from(value: &DutyInfo) -> Self {
+impl From<&ffxiv::duties::DutyInfo> for ApiReadableDutyInfo {
+    fn from(value: &ffxiv::duties::DutyInfo) -> Self {
         Self {
             name: value.name,
             high_end: value.high_end,
@@ -210,7 +142,7 @@ impl From<&DutyInfo> for ApiReadableDutyInfo {
 }
 
 #[derive(Serialize)]
-struct ApiReadableObjectiveFlags {
+pub struct ApiReadableObjectiveFlags {
     duty_completion: bool,
     practice: bool,
     loot: bool,
@@ -238,7 +170,8 @@ impl From<ConditionFlags> for ApiReadableConditionFlags {
         Self {
             duty_complete: value.contains(ConditionFlags::DUTY_COMPLETE),
             duty_incomplete: value.contains(ConditionFlags::DUTY_INCOMPLETE),
-            duty_complete_reward_unclaimed: value.contains(ConditionFlags::DUTY_COMPLETE_WEEKLY_REWARD_UNCLAIMED),
+            duty_complete_reward_unclaimed: value
+                .contains(ConditionFlags::DUTY_COMPLETE_WEEKLY_REWARD_UNCLAIMED),
         }
     }
 }
@@ -297,7 +230,7 @@ impl From<SearchAreaFlags> for ApiReadableSearchAreaFlags {
 }
 
 #[derive(Serialize)]
-struct ApiReadablePartyFinderSlot(Vec<&'static str>); // list of job codes
+pub struct ApiReadablePartyFinderSlot(Vec<&'static str>); // list of job codes
 
 impl From<PartyFinderSlot> for ApiReadablePartyFinderSlot {
     fn from(value: PartyFinderSlot) -> Self {
@@ -309,5 +242,24 @@ impl From<PartyFinderSlot> for ApiReadablePartyFinderSlot {
                 .map(|cj| cj.code())
                 .collect(),
         )
+    }
+}
+
+#[derive(Serialize)]
+pub struct ApiLocalizedString {
+    en: String,
+    ja: String,
+    de: String,
+    fr: String,
+}
+
+impl From<SeString> for ApiLocalizedString {
+    fn from(value: SeString) -> Self {
+        Self {
+            en: value.full_text(&Language::English),
+            ja: value.full_text(&Language::Japanese),
+            de: value.full_text(&Language::German),
+            fr: value.full_text(&Language::French),
+        }
     }
 }

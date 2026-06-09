@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use super::LocalisedText;
+use std::collections::HashMap;
 
 lazy_static::lazy_static! {
     pub static ref AUTO_TRANSLATE: HashMap<(u32, u32), LocalisedText> = maplit::hashmap! {

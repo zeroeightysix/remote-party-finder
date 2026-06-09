@@ -1,7 +1,7 @@
+use crate::listing::{DutyCategory, DutyType};
+use serde::Serialize;
 use std::borrow::Cow;
 use std::{cmp::Ordering, str::FromStr};
-use serde::Serialize;
-use crate::listing::{DutyCategory, DutyType};
 
 pub use self::{
     auto_translate::AUTO_TRANSLATE, duties::DUTIES, jobs::JOBS, roulettes::ROULETTES,
@@ -185,7 +185,7 @@ pub fn duty_name<'a>(
                 Language::Japanese => "G.A.T.E.",
                 Language::German => "GATEs",
                 Language::French => "JACTA",
-            })
+            });
         }
         (_, DutyCategory::GoldSaucer) if (12..=19).contains(&duty) => {
             // in the sheet, the order is sagolii, del sol, tranquil, random

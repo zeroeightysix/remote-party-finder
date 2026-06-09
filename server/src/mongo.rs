@@ -1,12 +1,12 @@
-use anyhow::Context;
 use crate::listing::PartyFinderListing;
 use crate::listing_container::{ListingContainer, QueriedListing};
+use anyhow::Context;
 use chrono::{TimeDelta, Utc};
 use futures_util::StreamExt;
 use mongodb::bson::doc;
+use mongodb::options::UpdateOptions;
 use mongodb::results::UpdateResult;
 use mongodb::Collection;
-use mongodb::options::UpdateOptions;
 
 pub async fn get_current_listings(
     collection: Collection<ListingContainer>,
