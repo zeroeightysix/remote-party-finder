@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Dalamud.NET.Sdk/15.0.0">
 
     <PropertyGroup>
-        <Version>1.0.18</Version>
+        <Version>1.0.19</Version>
         <Author>086, Anna</Author>
         <Name>Remote Party Finder Uploader</Name>
         <Punchline>Crowdsourced PF website (upload PF listings to xivpf.com)</Punchline>
