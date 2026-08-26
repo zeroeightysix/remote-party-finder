@@ -1,5 +1,5 @@
-use super::LocalisedText;
 use std::collections::HashMap;
+use super::LocalisedText;
 
 #[derive(Debug)]
 pub struct RouletteInfo {

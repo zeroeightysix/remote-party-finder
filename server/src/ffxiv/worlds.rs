@@ -1,5 +1,5 @@
-use ffxiv_types::World;
 use std::collections::HashMap;
+use ffxiv_types::World;
 
 lazy_static::lazy_static! {
     pub static ref WORLDS: HashMap<u32, World> = maplit::hashmap! {

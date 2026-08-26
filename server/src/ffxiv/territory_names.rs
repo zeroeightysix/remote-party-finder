@@ -1,5 +1,5 @@
-use super::LocalisedText;
 use std::collections::HashMap;
+use super::LocalisedText;
 
 lazy_static::lazy_static! {
     pub static ref TERRITORY_NAMES: HashMap<u32, LocalisedText> = maplit::hashmap! {
@@ -6543,6 +6543,12 @@ lazy_static::lazy_static! {
             de: "Treno",
             fr: "Tréno",
         },
+        1329 => LocalisedText {
+            en: "Kanilokka Corpus Substructure",
+            ja: "カニロッカ技研地下",
+            de: "Tiefen von Kanilokkas Institut",
+            fr: "Sous-sol de l'Institut Kanilokka",
+        },
         1330 => LocalisedText {
             en: "Dzemael Darkhold",
             ja: "ゼーメル要塞",
@@ -6609,6 +6615,12 @@ lazy_static::lazy_static! {
             de: "Klyteum",
             fr: "Le Clyteum",
         },
+        1346 => LocalisedText {
+            en: "North Horn",
+            ja: "三日月島北部",
+            de: "Nördliches Kreszentia",
+            fr: "Île de Lunule septentrionale",
+        },
         1357 => LocalisedText {
             en: "Archeia Harmonias",
             ja: "ハルモニア戦争図書館",
@@ -6620,6 +6632,18 @@ lazy_static::lazy_static! {
             ja: "ハルモニア戦争図書館",
             de: "Archeia Harmonias",
             fr: "La Bibliothèque Harmonia",
+        },
+        1359 => LocalisedText {
+            en: "The Gold Saucer",
+            ja: "ゴールドソーサー",
+            de: "Gold Saucer",
+            fr: "Gold Saucer",
+        },
+        1360 => LocalisedText {
+            en: "Keybound Square",
+            ja: "キーバウンドスクウェア",
+            de: "Ring der Tasten",
+            fr: "Square des clavistes",
         },
         1361 => LocalisedText {
             en: "The Unmaking",
